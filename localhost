@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+require "optparse"
+require "webrick"
+
+opts = OptionParser.new
+
+documentroot = './'
+bind = '0.0.0.0'
+port = '3000'
+
+opts.on("-p Port", "--port Port") { |v|
+  port = v
+}
+
+opts.on("-b BindAddress", "--bind BindAddress") { |v|
+  bind = v
+}
+
+opts.on("-d DocumentRoot", "--documentroot DocumentRoot") { |v|
+  documentroot = v
+}
+
+begin
+  opts.parse!
+rescue
+  print opts.help
+end
+
+srv = WEBrick::HTTPServer.new({
+        :DocumentRoot => documentroot,
+        :BindAddress => bind,
+        :Port => port
+    })
+trap("INT") { srv.shutdown }
+srv.start
